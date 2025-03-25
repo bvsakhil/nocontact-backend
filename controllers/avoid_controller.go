@@ -17,14 +17,12 @@ func CreateAvoid(c *gin.Context) {
 		return
 	}
 
-	// Add user authentication context (placeholder)
 	userID, exists := c.Get("userID")
 	if !exists {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "User not authenticated"})
 		return
 	}
 
-	// Ensure the avoid belongs to the authenticated user
 	avoid.UserID = userID.(uint)
 
 	avoid.StartDate = time.Now()
@@ -46,27 +44,23 @@ func CheckInAvoid(c *gin.Context) {
 		return
 	}
 
-	// Find the associated Avoid
 	var avoid models.Avoid
 	if err := database.DB.First(&avoid, dailyCheck.AvoidID).Error; err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Avoid not found"})
 		return
 	}
 
-	// Add user authentication context (placeholder)
 	userID, exists := c.Get("userID")
 	if !exists {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "User not authenticated"})
 		return
 	}
 
-	// Ensure the avoid belongs to the authenticated user
 	if avoid.UserID != userID.(uint) {
 		c.JSON(http.StatusForbidden, gin.H{"error": "Not authorized to check in this avoid"})
 		return
 	}
 
-	// Check if the avoid is still active based on duration
 	if time.Since(avoid.StartDate).Hours() > float64(avoid.Duration*24) {
 		avoid.IsActive = false
 		database.DB.Save(&avoid)
@@ -83,7 +77,6 @@ func CheckInAvoid(c *gin.Context) {
 		return
 	}
 
-	// Update last checked in date for the avoid
 	avoid.LastCheckedIn = dailyCheck.CheckedDate
 	database.DB.Save(&avoid)
 
@@ -91,7 +84,7 @@ func CheckInAvoid(c *gin.Context) {
 }
 
 func GetUserAvoids(c *gin.Context) {
-	// Add user authentication context (placeholder)
+
 	userID, exists := c.Get("userID")
 	if !exists {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "User not authenticated"})
@@ -117,14 +110,12 @@ func GetAvoidDetails(c *gin.Context) {
 		return
 	}
 
-	// Add user authentication context (placeholder)
 	userID, exists := c.Get("userID")
 	if !exists {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "User not authenticated"})
 		return
 	}
 
-	// Ensure the avoid belongs to the authenticated user
 	if avoid.UserID != userID.(uint) {
 		c.JSON(http.StatusForbidden, gin.H{"error": "Not authorized to view this avoid"})
 		return
